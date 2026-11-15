@@ -1,12 +1,22 @@
 # IT Systems Administration Home Lab
 
-A practical, hands-on home lab documenting my development of professional IT infrastructure, systems administration, networking, troubleshooting, and cybersecurity skills.
+A practical, hands-on home lab documenting my development of professional IT infrastructure, systems administration, networking, troubleshooting and cybersecurity skills.
 
 ## About This Project
 
-This project simulates the IT environment of a small organization called **Butty Technologies**. It is designed to provide practical experience with the technologies and responsibilities commonly encountered in IT Support, Help Desk, Desktop Support, IT Operations, and Junior Systems Administration roles.
+This project simulates the IT environment of a small organization called **Butty Technologies**. It is designed to provide practical experience with the technologies and responsibilities commonly encountered in IT Support, Help Desk, Desktop Support, IT Operations and Junior Systems Administration roles.
 
-Rather than focusing only on theory, I am building, configuring, testing, troubleshooting, and documenting real systems.
+Rather than focusing only on theory, I am building, configuring, testing, troubleshooting and documenting real systems. Every configuration change is recorded in a [change log](CHANGELOG.md) with its reason, verification and rollback method.
+
+## Lab Index
+
+| Lab | Title | Status |
+|---|---|---|
+| 0.1 | [Physical network assessment](01-home-lab-infrastructure/physical-network-assessment.md) | ✅ Complete |
+| 0.2 | [Virtualization network inspection](01-home-lab-infrastructure/virtualization-network-inspection.md) | ✅ Complete |
+| — | [Network design decisions](01-home-lab-infrastructure/network-design.md) | ✅ Decision 001 accepted |
+| 1.1 | [Domain controller preparation (DC01)](02-windows-server/dc01-preparation.md) | ✅ Complete |
+| 1.2 | Active Directory forest deployment | ⏳ Next |
 
 ## Lab Environment
 
@@ -19,18 +29,20 @@ Rather than focusing only on theory, I am building, configuring, testing, troubl
 | Hypervisor | VMware Workstation Pro |
 | Server operating system | Windows Server 2025 Standard Evaluation |
 | Physical client | Windows 11 Pro workstation |
-| Network | Physical Wi-Fi router and bridged virtual networking |
+| Network | 4G LTE router (192.168.1.0/24) with bridged virtual networking |
 
-Sensitive network details and credentials are intentionally excluded from this public repository.
+Full details: [environment](01-home-lab-infrastructure/environment.md) · [network design](01-home-lab-infrastructure/network-design.md). Sensitive network details, hardware identifiers and credentials are intentionally excluded from this public repository.
 
-## Planned Lab Architecture
+## Lab Architecture
 
-- **DC01** — Windows Server domain controller, DNS, and Active Directory services.
-- **CLIENT01** — Windows 11 workstation for employee-side testing.
-- **CLIENT02** — Additional Windows client for administration and troubleshooting exercises.
-- **Linux Server** — Linux administration and service-management practice.
+| System | Role | Status |
+|---|---|---|
+| **DC01** | Domain controller, DNS, Active Directory · 192.168.1.10 (static) | Prepared; AD DS next |
+| **CLIENT01** | Windows 11 VM for employee-side testing | Planned |
+| **CLIENT02** | Physical Windows 11 workstation, domain member | Planned |
+| **Linux server** | Linux administration and service management | Planned |
 
-The proposed lab domain is `ad.buttytechnologies.test`.
+Lab domain: `ad.buttytechnologies.test`
 
 ## Skills and Technologies
 
@@ -46,35 +58,36 @@ The proposed lab domain is `ad.buttytechnologies.test`.
 - Backup and disaster recovery
 - IT help desk operations and ticket documentation
 - Linux system administration
-- PowerShell automation
+- PowerShell and Bash automation
 - Endpoint security and hardening
 - Vulnerability assessment and security monitoring
 - Virtualization
+- Microsoft 365 and cloud identity
+- Version control with Git
 
-These are learning objectives; each skill will be marked as completed only after practical implementation and testing.
+These are learning objectives; each skill is marked as completed only after practical implementation and testing.
 
 ## Progress
 
 ### Completed
 
-- [x] Installed VMware Workstation Pro.
-- [x] Prepared the home lab directory structure.
-- [x] Downloaded the Windows Server 2025 installation ISO.
-- [x] Created the first Windows Server virtual machine.
-- [x] Configured bridged networking for the server VM.
-- [x] Established network connectivity between the lab server and physical computers.
+- [x] Installed VMware Workstation Pro and created the Windows Server 2025 VM.
+- [x] Assessed and documented the physical network (Lab 0.1).
+- [x] Inspected and documented VMware virtual networking (Lab 0.2).
+- [x] Recorded the Phase 1 network design (Design Decision 001).
+- [x] Prepared DC01: snapshot, rename, time zone, static IP and controlled ICMP (Lab 1.1).
+- [x] Verified connectivity between DC01 and the host PC.
 
 ### In Progress
 
-- [ ] Document the lab environment and network topology.
-- [ ] Finalize the server's network configuration.
-- [ ] Configure Windows Server roles and features.
-- [ ] Install and configure Active Directory Domain Services.
-- [ ] Configure DNS and domain services.
+- [ ] Install AD DS and promote DC01 (forest `ad.buttytechnologies.test`).
+- [ ] Configure DNS for the domain.
+- [ ] Verify connectivity between DC01 and the physical client.
+- [ ] Join the physical client to the domain.
 
-## Documentation Structure
+## Documentation Standard
 
-Each lab will include, where applicable:
+Each lab includes, where applicable:
 
 1. Objective and business scenario.
 2. Environment and prerequisites.
@@ -86,7 +99,7 @@ Each lab will include, where applicable:
 
 ## Project Roadmap
 
-The lab will progressively cover infrastructure setup, Windows Server, Active Directory, DNS, DHCP, Group Policy, Windows client management, file services, remote support, backup, help desk operations, networking, Linux, endpoint security, automation, Microsoft 365, deployment, vulnerability assessment, security monitoring, and a final enterprise simulation.
+The lab will progressively cover infrastructure setup, Windows Server, Active Directory, DNS, DHCP, Group Policy, Windows client management, file services, remote support, backup, help desk operations, networking and segmentation, Linux, endpoint security, automation, Microsoft 365 and cloud identity, deployment, vulnerability assessment, security monitoring, and a final enterprise simulation.
 
 ## Purpose
 
