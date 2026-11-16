@@ -14,9 +14,11 @@ Rather than focusing only on theory, I am building, configuring, testing, troubl
 |---|---|---|
 | 0.1 | [Physical network assessment](01-home-lab-infrastructure/physical-network-assessment.md) | ✅ Complete |
 | 0.2 | [Virtualization network inspection](01-home-lab-infrastructure/virtualization-network-inspection.md) | ✅ Complete |
-| — | [Network design decisions](01-home-lab-infrastructure/network-design.md) | ✅ Decision 001 accepted |
+| — | [Network design decisions](01-home-lab-infrastructure/network-design.md) | ✅ Decisions 001–002 |
 | 1.1 | [Domain controller preparation (DC01)](02-windows-server/dc01-preparation.md) | ✅ Complete |
-| 1.2 | Active Directory forest deployment | ⏳ Next |
+| 1.2 | [Active Directory forest deployment](03-active-directory/ad-ds-forest-deployment.md) | ✅ Complete |
+| 0.3 | [Network migration to a new router](01-home-lab-infrastructure/network-migration.md) | ✅ Complete |
+| 1.3 | Join the physical client to the domain | ⏳ Next |
 
 ## Lab Environment
 
@@ -29,7 +31,7 @@ Rather than focusing only on theory, I am building, configuring, testing, troubl
 | Hypervisor | VMware Workstation Pro |
 | Server operating system | Windows Server 2025 Standard Evaluation |
 | Physical client | Windows 11 Pro workstation |
-| Network | 4G LTE router (192.168.1.0/24) with bridged virtual networking |
+| Network | Home router (192.168.5.0/24) behind an upstream unit, with bridged virtual networking |
 
 Full details: [environment](01-home-lab-infrastructure/environment.md) · [network design](01-home-lab-infrastructure/network-design.md). Sensitive network details, hardware identifiers and credentials are intentionally excluded from this public repository.
 
@@ -37,7 +39,7 @@ Full details: [environment](01-home-lab-infrastructure/environment.md) · [netwo
 
 | System | Role | Status |
 |---|---|---|
-| **DC01** | Domain controller, DNS, Active Directory · 192.168.1.10 (static) | Prepared; AD DS next |
+| **DC01** | Domain controller, DNS, Active Directory · 192.168.5.10 (static) | ✅ Operational |
 | **CLIENT01** | Windows 11 VM for employee-side testing | Planned |
 | **CLIENT02** | Physical Windows 11 workstation, domain member | Planned |
 | **Linux server** | Linux administration and service management | Planned |
@@ -76,14 +78,15 @@ These are learning objectives; each skill is marked as completed only after prac
 - [x] Inspected and documented VMware virtual networking (Lab 0.2).
 - [x] Recorded the Phase 1 network design (Design Decision 001).
 - [x] Prepared DC01: snapshot, rename, time zone, static IP and controlled ICMP (Lab 1.1).
-- [x] Verified connectivity between DC01 and the host PC.
+- [x] Deployed the Active Directory forest `ad.buttytechnologies.test` with integrated DNS (Lab 1.2).
+- [x] Migrated the lab to a new router and re-IPed the domain controller without breaking AD (Lab 0.3).
+- [x] Verified connectivity between DC01, the host PC and the physical client.
 
 ### In Progress
 
-- [ ] Install AD DS and promote DC01 (forest `ad.buttytechnologies.test`).
-- [ ] Configure DNS for the domain.
-- [ ] Verify connectivity between DC01 and the physical client.
 - [ ] Join the physical client to the domain.
+- [ ] Create the organizational structure, users and groups.
+- [ ] Configure Group Policy.
 
 ## Documentation Standard
 

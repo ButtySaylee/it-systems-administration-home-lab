@@ -151,3 +151,98 @@ Set-NetConnectionProfile -InterfaceAlias "Ethernet0" -NetworkCategory Public
 ```
 
 **Status:** Closed — successful.
+
+---
+
+## CHG-006 — Promote DC01 to the first domain controller
+
+| Field | Detail |
+|---|---|
+| Date | 2026-11-15 |
+| System | DC01 |
+| Risk | High (creates the forest) |
+| Prerequisite | Snapshot `02 - DC01 prepared - before AD DS`; `Test-ADDSForestInstallation` → Success |
+| Related lab | [Lab 1.2](03-active-directory/ad-ds-forest-deployment.md) |
+
+**Change:** `Install-WindowsFeature AD-Domain-Services -IncludeManagementTools`, then `Install-ADDSForest -DomainName "ad.buttytechnologies.test" -DomainNetbiosName "BUTTYTECH" -InstallDns`
+**Verification:** Full Lab 1.2 checks (forest, domain, DC, services, shares, DNS A and SRV records).
+**Rollback:** Revert to snapshot 02. Demotion is possible but more complex.
+**Status:** Closed — successful.
+
+---
+
+## CHG-007 — DC01 DNS client order
+
+| Field | Detail |
+|---|---|
+| Date | 2026-11-16 |
+| System | DC01 |
+| Risk | Low |
+
+**Reason:** Promotion set the DNS client to loopback only. Best practice is the real IP first, loopback last.
+**Change:** Applied as `192.168.1.10` only; the loopback entry was omitted.
+**Status:** Partially applied — **superseded by CHG-010**, which set `192.168.5.10, 127.0.0.1`.
+
+---
+
+## CHG-008 — Shrink the router's DHCP pool
+
+| Field | Detail |
+|---|---|
+| Date | 2026-11-16 |
+| System | Router (192.168.5.1) |
+| Risk | Low |
+| Design | [Design Decision 002](01-home-lab-infrastructure/network-design.md) |
+
+**Before:** Pool 192.168.5.2 – .244
+**Change:** LAN Setting → Address Range → 192.168.5.100 – .200
+**After:** Pool .100 – .200; .2 – .99 reserved for static infrastructure
+**Verification:** Setting persisted after refresh; host release/renew gave 192.168.5.161
+**Rollback:** Set the range back to .2 – .244
+**Status:** Closed — successful.
+
+---
+
+## CHG-009 — Re-point VMware VMnet0 to Ethernet
+
+| Field | Detail |
+|---|---|
+| Date | 2026-11-16 |
+| System | ButtyTheGreat (VMware Workstation) |
+| Risk | Low (DC01 powered off) |
+
+**Reason:** The host moved to Ethernet; VMnet0 was pinned to the now-disconnected Wi-Fi adapter, which isolated DC01.
+**Before:** VMnet0 bridged to Intel Wi-Fi 6 AX201
+**After:** VMnet0 bridged to Realtek USB GbE Family Controller
+**Follow-up:** Snapshot `03 - AD DS deployed, before network migration`
+**Rollback:** Re-select the Wi-Fi adapter in the Virtual Network Editor
+**Status:** Closed — successful.
+
+---
+
+## CHG-010 — Re-IP DC01 to 192.168.5.10
+
+| Field | Detail |
+|---|---|
+| Date | 2026-11-16 |
+| System | DC01 |
+| Risk | Medium (DC address change; performed from the VM console) |
+| Related lab | [Lab 0.3](01-home-lab-infrastructure/network-migration.md) |
+
+**Before:** 192.168.1.10/24, gateway 192.168.1.1, DNS client 192.168.1.10, forwarder 192.168.1.1
+**Change:**
+
+```powershell
+Remove-NetIPAddress -InterfaceAlias "Ethernet0" -AddressFamily IPv4 -Confirm:$false
+Remove-NetRoute -InterfaceAlias "Ethernet0" -AddressFamily IPv4 -Confirm:$false
+New-NetIPAddress -InterfaceAlias "Ethernet0" -IPAddress 192.168.5.10 -PrefixLength 24 -DefaultGateway 192.168.5.1
+Set-DnsClientServerAddress -InterfaceAlias "Ethernet0" -ServerAddresses 192.168.5.10, 127.0.0.1
+Set-DnsServerForwarder -IPAddress 192.168.5.1
+ipconfig /registerdns
+Restart-Service Netlogon
+```
+
+**After:** 192.168.5.10/24 (Preferred), gateway 192.168.5.1, DNS client `{192.168.5.10, 127.0.0.1}`, forwarder 192.168.5.1; all A records point to 192.168.5.10, with no stale entries
+**Verification:** Lab 0.3 section 6
+**Rollback:** Revert to snapshot 03
+**Status:** Closed — successful.
