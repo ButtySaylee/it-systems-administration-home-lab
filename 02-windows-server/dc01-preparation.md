@@ -128,3 +128,47 @@ Resolved by CHG-005.
 - **Troubleshoot layer by layer.** ARP proved the network path worked and isolated the fault to the host firewall.
 - **When a tool's output surprises you, check how the tool works.**
 - **Ping latency reveals the traffic path:** the host reaches its own bridged VM in under 1 ms, while PC-to-PC traffic over Wi-Fi took 40 ms or more.
+
+## 8. Evidence
+
+Screenshots are stored in [`screenshots/lab-1.1/`](screenshots/lab-1.1/). MAC addresses, DUIDs, router identifiers and network names are redacted.
+
+**Figure 1: Baseline snapshot in Snapshot Manager**
+
+![Baseline snapshot in Snapshot Manager](screenshots/lab-1.1/01-snapshot-baseline.png)
+
+**Figure 2: After the rename: hostname DC01, time zone still Pacific Standard Time**
+
+![After the rename: hostname DC01, time zone still Pacific Standard Time](screenshots/lab-1.1/02-hostname-timezone-before.png)
+
+**Figure 3: CHG-003: time zone set to Greenwich Standard Time**
+
+![CHG-003: time zone set to Greenwich Standard Time](screenshots/lab-1.1/03-timezone-after.png)
+
+**Figure 4: Address check: no ARP entry for 192.168.1.10 (DHCP address had changed to .107)**
+
+![Address check: no ARP entry for 192.168.1.10 (DHCP address had changed to .107)](screenshots/lab-1.1/04-address-free-check.png)
+
+**Figure 5: CHG-004: static address applied (Tentative during duplicate address detection)**
+
+![CHG-004: static address applied (Tentative during duplicate address detection)](screenshots/lab-1.1/05-new-netipaddress.png)
+
+**Figure 6: Static configuration: DHCP disabled, 192.168.1.10 Preferred**
+
+![Static configuration: DHCP disabled, 192.168.1.10 Preferred](screenshots/lab-1.1/06-static-ip-ipconfig.png)
+
+**Figure 7: DC01 reaches the gateway**
+
+![DC01 reaches the gateway](screenshots/lab-1.1/07-ping-gateway.png)
+
+**Figure 8: Before CHG-005: profile Public, FPS-ICMP4-ERQ-In disabled**
+
+![Before CHG-005: profile Public, FPS-ICMP4-ERQ-In disabled](screenshots/lab-1.1/08-firewall-before.png)
+
+**Figure 9: DNS resolution working with the static configuration**
+
+![DNS resolution working with the static configuration](screenshots/lab-1.1/09-dns-resolve-google.png)
+
+**Figure 10: CHG-005: profile Private, rule enabled for Domain and Private**
+
+![CHG-005: profile Private, rule enabled for Domain and Private](screenshots/lab-1.1/10-icmp-rule-after.png)

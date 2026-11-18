@@ -246,3 +246,28 @@ Restart-Service Netlogon
 **Verification:** Lab 0.3 section 6
 **Rollback:** Revert to snapshot 03
 **Status:** Closed — successful.
+
+---
+
+## CHG-011 — Set the new network to Private on both PCs
+
+| Field | Detail |
+|---|---|
+| Date | 2026-11-18 |
+| Systems | ButtyTheGreat, SUCCESS |
+| Risk | Low |
+| Related lab | [Lab 0.3](01-home-lab-infrastructure/network-migration.md) |
+
+**Reason:** Network categories are stored per network. On the new router, both PCs were Public, so the CHG-001 echo-request rule (Private only) no longer applied, and neither PC answered pings.
+**Before:** ButtyTheGreat Public (Ethernet 2 and Wi-Fi 4); SUCCESS Public (Wi-Fi). ButtyTheGreat → SUCCESS ping: 100% loss.
+**Change:**
+
+```powershell
+Set-NetConnectionProfile -InterfaceAlias "Ethernet 2" -NetworkCategory Private   # ButtyTheGreat
+Set-NetConnectionProfile -InterfaceAlias "Wi-Fi" -NetworkCategory Private        # SUCCESS
+```
+
+ButtyTheGreat's Wi-Fi was also switched off to avoid a duplicate connection to the same network.
+**After:** Both Private; pings succeed in both directions.
+**Rollback:** The same commands with `-NetworkCategory Public`.
+**Status:** Closed — successful.

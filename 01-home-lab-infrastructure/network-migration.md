@@ -3,7 +3,7 @@
 **Organization:** Butty Technologies (simulated)
 **Category:** Network administration · Change management · Active Directory operations
 **Status:** Complete
-**Related:** [Design Decision 002](network-design.md) · [CHG-008 to CHG-010](../CHANGELOG.md) · Previous network: [Lab 0.1](physical-network-assessment.md)
+**Related:** [Design Decision 002](network-design.md) · [CHG-008 to CHG-011](../CHANGELOG.md) · Previous network: [Lab 0.1](physical-network-assessment.md)
 
 ---
 
@@ -52,7 +52,7 @@ New router                 192.168.5.1   ← double NAT
 | ButtyTheGreat | Ethernet (Realtek USB GbE, `Ethernet 2`); Wi-Fi now disconnected | 192.168.5.55 (DHCP) |
 | SUCCESS | Wi-Fi | 192.168.5.166 (DHCP) |
 | Two phones | Wi-Fi | .9 and .167 |
-| Unidentified device | — | .115, locally administered (randomised) MAC. Not SUCCESS; investigation open. |
+| Unidentified device | — | .115, locally administered (randomised) MAC. Confirmed not SUCCESS (different hardware MAC); investigation open. |
 
 Other host adapters noted: a VirtualBox host-only network (192.168.56.0/24) and a TAP-Windows VPN adapter. Neither overlaps lab subnets.
 
@@ -97,6 +97,22 @@ ipconfig /registerdns
 Restart-Service Netlogon
 ```
 
+### 5.4 CHG-011 — Set the new network to Private on both PCs
+
+**Finding:** Both PCs showed NetworkCategory **Public** on the new network. Categories are stored per network, so CHG-001 didn't carry over, and the Private-only echo-request rule no longer applied. ButtyTheGreat was also connected twice (Ethernet and Wi-Fi to the same router); Wi-Fi was switched off.
+
+```powershell
+Set-NetConnectionProfile -InterfaceAlias "Ethernet 2" -NetworkCategory Private   # ButtyTheGreat
+Set-NetConnectionProfile -InterfaceAlias "Wi-Fi"      -NetworkCategory Private   # SUCCESS
+```
+
+| Test | Before | After |
+|---|---|---|
+| ButtyTheGreat → SUCCESS | 100% loss (SUCCESS Public) | 4/4 replies, 57–94 ms |
+| SUCCESS → ButtyTheGreat | — | 4/4 replies, 5–24 ms |
+
+The higher latency towards SUCCESS reflects Wi-Fi power saving: an idle wireless client wakes up to receive unsolicited traffic.
+
 ## 6. Verification
 
 | Check | Result |
@@ -110,7 +126,8 @@ Restart-Service Netlogon
 | AD services | NTDS, KDC, Netlogon, DNS, ADWS Running ✓ |
 | Network profile | DomainAuthenticated, IPv4Connectivity Internet ✓ |
 | ButtyTheGreat → DC01 | 4/4, <1 ms, TTL=128 ✓ |
-| SUCCESS → DC01 | Replies ✓ |
+| SUCCESS → DC01 | 4/4 replies, 2–7 ms ✓ |
+| Network profiles (both PCs) | Private after CHG-011 ✓ |
 
 ## 7. Problems encountered
 
@@ -125,4 +142,146 @@ Restart-Service Netlogon
 - **Design trade-offs:** a small, reversible change now (shrinking the pool) beats boxing the lab into nine spare addresses.
 - **Look before deleting.** Stale DNS records were expected, but none existed; a blind cleanup would have "fixed" nothing.
 - **Shut down domain controllers cleanly.** A hard power-off risks the AD and SYSVOL databases. Here DFSR recovered on its own, but in other cases replication stops and waits for an administrator (event 2213).
+- **Settings tied to a network don't move with the machine.** Network categories, and the firewall rules that depend on them, must be re-checked after a network change.
+- **A self-ping proves nothing.** Pinging your own address never touches the firewall; the test must start on another machine.
 - **Document migrations as new labs.** Earlier write-ups stay accurate for the network they describe.
+
+## 9. Evidence
+
+Screenshots are stored in [`screenshots/lab-0.3/`](screenshots/lab-0.3/). MAC addresses, DUIDs, router identifiers and network names are redacted.
+
+**Figure 1: New router device information (UUID and MAC redacted)**
+
+![New router device information (UUID and MAC redacted)](screenshots/lab-0.3/01-router-device-info.png)
+
+**Figure 2: WAN address from 192.168.188.0/24: double NAT**
+
+![WAN address from 192.168.188.0/24: double NAT](screenshots/lab-0.3/02-router-wan-double-nat.png)
+
+**Figure 3: Internet type: wired DHCP from the upstream unit**
+
+![Internet type: wired DHCP from the upstream unit](screenshots/lab-0.3/03-router-internet-type.png)
+
+**Figure 4: Before CHG-008: DHCP pool .2–.244**
+
+![Before CHG-008: DHCP pool .2–.244](screenshots/lab-0.3/04-router-dhcp-before.png)
+
+**Figure 5: DHCP client list (MAC addresses redacted)**
+
+![DHCP client list (MAC addresses redacted)](screenshots/lab-0.3/05-router-dhcp-clients.png)
+
+**Figure 6: CHG-008: DHCP pool .100–.200**
+
+![CHG-008: DHCP pool .100–.200](screenshots/lab-0.3/06-router-dhcp-after.png)
+
+**Figure 7: CHG-009: VMnet0 bridged to the Realtek USB Ethernet adapter**
+
+![CHG-009: VMnet0 bridged to the Realtek USB Ethernet adapter](screenshots/lab-0.3/07-vnet-editor-realtek.png)
+
+**Figure 8: Recovery point before the re-IP**
+
+![Recovery point before the re-IP](screenshots/lab-0.3/08-snapshot-03.png)
+
+**Figure 9: CHG-010: new address 192.168.5.10**
+
+![CHG-010: new address 192.168.5.10](screenshots/lab-0.3/09-dc01-new-ip.png)
+
+**Figure 10: DNS client, forwarder and address state Preferred**
+
+![DNS client, forwarder and address state Preferred](screenshots/lab-0.3/10-dns-client-forwarder-preferred.png)
+
+**Figure 11: DNS client {192.168.5.10, 127.0.0.1}**
+
+![DNS client {192.168.5.10, 127.0.0.1}](screenshots/lab-0.3/11-dns-client-verify.png)
+
+**Figure 12: Gateway reachable; internet names resolve**
+
+![Gateway reachable; internet names resolve](screenshots/lab-0.3/12-ping-gateway-resolve.png)
+
+**Figure 13: DNS re-registration and Netlogon restart**
+
+![DNS re-registration and Netlogon restart](screenshots/lab-0.3/13-registerdns-netlogon.png)
+
+**Figure 14: DNS zones (AD-integrated)**
+
+![DNS zones (AD-integrated)](screenshots/lab-0.3/14-dns-zones.png)
+
+**Figure 15: A records in both zones point only to 192.168.5.10**
+
+![A records in both zones point only to 192.168.5.10](screenshots/lab-0.3/15-dns-a-records.png)
+
+**Figure 16: DC01 network profile DomainAuthenticated, IPv4 Internet**
+
+![DC01 network profile DomainAuthenticated, IPv4 Internet](screenshots/lab-0.3/16-network-profile.png)
+
+**Figure 17: SRV record and AD services after migration**
+
+![SRV record and AD services after migration](screenshots/lab-0.3/17-srv-services.png)
+
+**Figure 18: dcdiag: unexpected-shutdown events 6008 and 41**
+
+![dcdiag: unexpected-shutdown events 6008 and 41](screenshots/lab-0.3/18-dcdiag-dirty-shutdown.png)
+
+**Figure 19: Event 2214: DFS Replication recovered automatically**
+
+![Event 2214: DFS Replication recovered automatically](screenshots/lab-0.3/19-dfsr-2214.png)
+
+**Figure 20: Recovery point after migration**
+
+![Recovery point after migration](screenshots/lab-0.3/20-snapshot-04.png)
+
+**Figure 21: ButtyTheGreat ipconfig: virtual adapters (VirtualBox, TAP)**
+
+![ButtyTheGreat ipconfig: virtual adapters (VirtualBox, TAP)](screenshots/lab-0.3/21a-pc1-ipconfig-header.png)
+
+**Figure 22: ButtyTheGreat on Ethernet 192.168.5.161; Wi-Fi disconnected**
+
+![ButtyTheGreat on Ethernet 192.168.5.161; Wi-Fi disconnected](screenshots/lab-0.3/21b-pc1-ipconfig-ethernet-wifi.png)
+
+**Figure 23: ButtyTheGreat → DC01**
+
+![ButtyTheGreat → DC01](screenshots/lab-0.3/22-ping-pc1-to-dc01.png)
+
+**Figure 24: SUCCESS ipconfig header**
+
+![SUCCESS ipconfig header](screenshots/lab-0.3/23a-pc2-ipconfig-header.png)
+
+**Figure 25: SUCCESS on Wi-Fi 192.168.5.166, DNS still the router**
+
+![SUCCESS on Wi-Fi 192.168.5.166, DNS still the router](screenshots/lab-0.3/23b-pc2-ipconfig-wifi.png)
+
+**Figure 26: SUCCESS → DC01**
+
+![SUCCESS → DC01](screenshots/lab-0.3/24-ping-pc2-to-dc01.png)
+
+**Figure 27: Finding: ButtyTheGreat Public on two adapters**
+
+![Finding: ButtyTheGreat Public on two adapters](screenshots/lab-0.3/25-pc1-profile-public-before-chg011.png)
+
+**Figure 28: Wi-Fi switched off; Ethernet still Public**
+
+![Wi-Fi switched off; Ethernet still Public](screenshots/lab-0.3/26-pc1-profile-wifi-off-public.png)
+
+**Figure 29: Finding: SUCCESS Public**
+
+![Finding: SUCCESS Public](screenshots/lab-0.3/27-pc2-profile-public-before-chg011.png)
+
+**Figure 30: Before CHG-011: ButtyTheGreat → SUCCESS times out**
+
+![Before CHG-011: ButtyTheGreat → SUCCESS times out](screenshots/lab-0.3/28-before-chg011-ping-pc1-to-pc2.png)
+
+**Figure 31: CHG-011 on ButtyTheGreat: Private**
+
+![CHG-011 on ButtyTheGreat: Private](screenshots/lab-0.3/29-chg011-profile-pc1.png)
+
+**Figure 32: CHG-011 on SUCCESS: Private**
+
+![CHG-011 on SUCCESS: Private](screenshots/lab-0.3/30-chg011-profile-pc2.png)
+
+**Figure 33: After CHG-011: ButtyTheGreat → SUCCESS replies**
+
+![After CHG-011: ButtyTheGreat → SUCCESS replies](screenshots/lab-0.3/31a-after-chg011-ping-pc1-to-pc2.png)
+
+**Figure 34: After CHG-011: SUCCESS → ButtyTheGreat replies**
+
+![After CHG-011: SUCCESS → ButtyTheGreat replies](screenshots/lab-0.3/31b-after-chg011-ping-pc2-to-pc1.png)

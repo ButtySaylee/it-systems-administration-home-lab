@@ -137,15 +137,37 @@ Get-NetFirewallRule -DisplayGroup "File and Printer Sharing" | Where-Object Enab
 
 The same change was applied to SUCCESS and confirmed by the technician.
 
+> **Update (18 Nov 2026):** Network categories are stored **per network**. After the router was replaced, Windows treated the new network as Public, so this change no longer applied there. It was re-applied as [CHG-011](../CHANGELOG.md); see [Lab 0.3](network-migration.md).
+
 ## 11. Evidence
 
-Screenshots are stored in [`screenshots/lab-0.1/`](screenshots/lab-0.1/), with network names and hardware identifiers redacted.
+> **Note on recaptured evidence:** Figures 4–6 were recaptured on 17 Nov 2026 with the original router temporarily reconnected, because the original outputs were recorded as text only. The ping latencies in Figure 4 (2–6 ms) differ from the original test (41–166 ms) because conditions differed on the day; the configuration shown is unchanged.
 
-- `01-ipconfig-buttythegreat.png`
-- `02-ipconfig-success.png`
-- `03-ping-tests.png`
-- `04-router-dhcp-settings.png`
-- `05-firewall-rule-before-after.png`
+Screenshots are stored in [`screenshots/lab-0.1/`](screenshots/lab-0.1/). MAC addresses, DUIDs, router identifiers and network names are redacted.
+
+**Figure 1: ButtyTheGreat Wi-Fi adapter on 192.168.1.0/24 (captured 12 Nov 2026)**
+
+![ButtyTheGreat Wi-Fi adapter on 192.168.1.0/24 (captured 12 Nov 2026)](screenshots/lab-0.1/01-ipconfig-pc1-wifi.png)
+
+**Figure 2: Router model and firmware; serial number, IMEI and IMSI redacted**
+
+![Router model and firmware; serial number, IMEI and IMSI redacted](screenshots/lab-0.1/02-router-device-info.png)
+
+**Figure 3: Router DHCP settings: pool .100–.200, 1-day lease**
+
+![Router DHCP settings: pool .100–.200, 1-day lease](screenshots/lab-0.1/03-router-dhcp-old.png)
+
+**Figure 4: Pings to the router (TTL=64) and to SUCCESS (TTL=128)**
+
+![Pings to the router (TTL=64) and to SUCCESS (TTL=128)](screenshots/lab-0.1/04-ping-tests-recaptured.png)
+
+**Figure 5: CHG-001 result: the echo-request rule enabled for the Private profile only**
+
+![CHG-001 result: the echo-request rule enabled for the Private profile only](screenshots/lab-0.1/05-firewall-rule-private-recaptured.png)
+
+**Figure 6: CHG-001 result: network category Private**
+
+![CHG-001 result: network category Private](screenshots/lab-0.1/06-network-profile-private-recaptured.png)
 
 ## 12. Lessons learned
 

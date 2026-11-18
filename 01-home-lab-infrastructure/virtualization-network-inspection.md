@@ -84,3 +84,23 @@ Get-NetIPInterface -AddressFamily IPv4 | Where-Object ConnectionState -eq Connec
 - Close configuration windows with **Cancel** when you only meant to look.
 - Guests always see a virtual wired adapter (`Ethernet0`), even when the host uses Wi-Fi.
 - Bridging over Wi-Fi works because VMware rewrites the guest's MAC address to the host's for wireless traffic. This can affect MAC-based features such as DHCP reservations.
+
+## 9. Evidence
+
+Screenshots are stored in [`screenshots/lab-0.2/`](screenshots/lab-0.2/). MAC addresses, DUIDs, router identifiers and network names are redacted.
+
+**Figure 1: Virtual Network Editor without admin rights: VMnet0 hidden (VMnet1 selected)**
+
+![Virtual Network Editor without admin rights: VMnet0 hidden (VMnet1 selected)](screenshots/lab-0.2/01-vnet-editor-non-admin-vmnet1.png)
+
+**Figure 2: Virtual Network Editor without admin rights (VMnet8 selected)**
+
+![Virtual Network Editor without admin rights (VMnet8 selected)](screenshots/lab-0.2/02-vnet-editor-non-admin-vmnet8.png)
+
+**Figure 3: After Change Settings: VMnet0 bridged to the Intel Wi-Fi adapter**
+
+![After Change Settings: VMnet0 bridged to the Intel Wi-Fi adapter](screenshots/lab-0.2/03-vnet-editor-vmnet0-wifi.png)
+
+**Figure 4: DC01 VM network adapter set to Bridged**
+
+![DC01 VM network adapter set to Bridged](screenshots/lab-0.2/04-dc01-network-adapter-bridged.png)
