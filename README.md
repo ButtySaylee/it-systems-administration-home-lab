@@ -6,19 +6,21 @@ A practical, hands-on home lab documenting my development of professional IT inf
 
 This project simulates the IT environment of a small organization called **Butty Technologies**. It is designed to provide practical experience with the technologies and responsibilities commonly encountered in IT Support, Help Desk, Desktop Support, IT Operations and Junior Systems Administration roles.
 
-Rather than focusing only on theory, I am building, configuring, testing, troubleshooting and documenting real systems. Every configuration change is recorded in a [change log](CHANGELOG.md) with its reason, verification and rollback method.
+Rather than focusing only on theory, I am building, configuring, testing, troubleshooting and documenting real systems. Every configuration change is recorded in a [change log](CHANGELOG.md) with its reason, verification and rollback method. Labs are numbered by phase (0 = foundations, 1 = Windows Server and Active Directory); the change log gives the full chronological history.
 
 ## Lab Index
 
-| Lab | Title | Status |
-|---|---|---|
-| 0.1 | [Physical network assessment](01-home-lab-infrastructure/physical-network-assessment.md) | ✅ Complete |
-| 0.2 | [Virtualization network inspection](01-home-lab-infrastructure/virtualization-network-inspection.md) | ✅ Complete |
-| — | [Network design decisions](01-home-lab-infrastructure/network-design.md) | ✅ Decisions 001–002 |
-| 1.1 | [Domain controller preparation (DC01)](02-windows-server/dc01-preparation.md) | ✅ Complete |
-| 1.2 | [Active Directory forest deployment](03-active-directory/ad-ds-forest-deployment.md) | ✅ Complete |
-| 0.3 | [Network migration to a new router](01-home-lab-infrastructure/network-migration.md) | ✅ Complete |
-| 1.3 | Join the physical client to the domain | ⏳ Next |
+| Lab | Title | Status | Completed |
+|---|---|---|---|
+| **Phase 0** | **Lab foundations** | | |
+| 0.1 | [Physical network assessment](01-home-lab-infrastructure/physical-network-assessment.md) | ✅ Complete | 2026-11-14 |
+| 0.2 | [Virtualization network inspection](01-home-lab-infrastructure/virtualization-network-inspection.md) | ✅ Complete | 2026-11-14 |
+| 0.3 | [Network migration to a new router](01-home-lab-infrastructure/network-migration.md) | ✅ Complete | 2026-11-18 |
+| — | [Network design decisions](01-home-lab-infrastructure/network-design.md) | ✅ Decisions 001–002 | 2026-11-16 |
+| **Phase 1** | **Windows Server and Active Directory** | | |
+| 1.1 | [Domain controller preparation (DC01)](02-windows-server/dc01-preparation.md) | ✅ Complete | 2026-11-15 |
+| 1.2 | [Active Directory forest deployment](03-active-directory/ad-ds-forest-deployment.md) | ✅ Complete | 2026-11-15 |
+| 1.3 | Join the physical client to the domain | ⏳ In progress | — |
 
 ## Lab Environment
 
