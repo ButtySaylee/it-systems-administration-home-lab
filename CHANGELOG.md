@@ -271,3 +271,37 @@ ButtyTheGreat's Wi-Fi was also switched off to avoid a duplicate connection to t
 **After:** Both Private; pings succeed in both directions.
 **Rollback:** The same commands with `-NetworkCategory Public`.
 **Status:** Closed — successful.
+
+---
+
+## CHG-012 — Point SUCCESS's DNS to DC01
+
+| Field | Detail |
+|---|---|
+| Date | 2026-11-18 |
+| System | SUCCESS (now CLIENT02), adapter Wi-Fi |
+| Risk | Low |
+| Related lab | [Lab 1.3](03-active-directory/domain-join-client02.md) |
+
+**Reason:** Domain members must use the domain controller as their only DNS server (Design Rule 3).
+**Before:** DNS 192.168.5.1 (router, via DHCP)
+**Change:** `Set-DnsClientServerAddress -InterfaceAlias "Wi-Fi" -ServerAddresses 192.168.5.10`
+**After:** DNS `{192.168.5.10}`; SRV record and internet names resolve; ports 389, 88 and 445 reachable
+**Rollback:** `Set-DnsClientServerAddress -InterfaceAlias "Wi-Fi" -ResetServerAddresses`
+**Status:** Closed — successful.
+
+---
+
+## CHG-013 — Rename SUCCESS to CLIENT02 and join the domain
+
+| Field | Detail |
+|---|---|
+| Date | 2026-11-19 |
+| Systems | CLIENT02; DC01 (computer object created) |
+| Risk | Medium (physical machine with no snapshot; local account kept as fallback) |
+| Related lab | [Lab 1.3](03-active-directory/domain-join-client02.md) |
+
+**Change:** `Add-Computer -DomainName "ad.buttytechnologies.test" -NewName "CLIENT02" -Credential "BUTTYTECH\Administrator"`, then a restart
+**Verification:** Domain sign-in; PartOfDomain True; secure channel True; LOGONSERVER \\DC01; profile DomainAuthenticated; time source DC01; AD object and DNS A record present
+**Rollback:** `Remove-Computer -UnjoinDomainCredential "BUTTYTECH\Administrator" -WorkgroupName "WORKGROUP" -Restart`, then `Remove-ADComputer CLIENT02` on DC01
+**Status:** Closed — successful.

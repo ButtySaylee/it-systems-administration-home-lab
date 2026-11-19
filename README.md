@@ -20,7 +20,8 @@ Rather than focusing only on theory, I am building, configuring, testing, troubl
 | **Phase 1** | **Windows Server and Active Directory** | | |
 | 1.1 | [Domain controller preparation (DC01)](02-windows-server/dc01-preparation.md) | ✅ Complete | 2026-11-15 |
 | 1.2 | [Active Directory forest deployment](03-active-directory/ad-ds-forest-deployment.md) | ✅ Complete | 2026-11-15 |
-| 1.3 | Join the physical client to the domain | ⏳ In progress | — |
+| 1.3 | [Join a physical workstation to the domain (CLIENT02)](03-active-directory/domain-join-client02.md) | ✅ Complete | 2026-11-19 |
+| 1.4 | Domain time hierarchy | ⏳ Next | — |
 
 ## Lab Environment
 
@@ -43,7 +44,7 @@ Full details: [environment](01-home-lab-infrastructure/environment.md) · [netwo
 |---|---|---|
 | **DC01** | Domain controller, DNS, Active Directory · 192.168.5.10 (static) | ✅ Operational |
 | **CLIENT01** | Windows 11 VM for employee-side testing | Planned |
-| **CLIENT02** | Physical Windows 11 workstation, domain member | Planned |
+| **CLIENT02** | Physical Windows 11 workstation, domain member | ✅ Joined |
 | **Linux server** | Linux administration and service management | Planned |
 
 Lab domain: `ad.buttytechnologies.test`
@@ -83,10 +84,11 @@ These are learning objectives; each skill is marked as completed only after prac
 - [x] Deployed the Active Directory forest `ad.buttytechnologies.test` with integrated DNS (Lab 1.2).
 - [x] Migrated the lab to a new router and re-IPed the domain controller without breaking AD (Lab 0.3).
 - [x] Verified connectivity between DC01, the host PC and the physical client.
+- [x] Joined the physical workstation CLIENT02 to the domain (Lab 1.3).
 
 ### In Progress
 
-- [ ] Join the physical client to the domain.
+- [ ] Configure the domain time hierarchy.
 - [ ] Create the organizational structure, users and groups.
 - [ ] Configure Group Policy.
 

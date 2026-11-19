@@ -2,7 +2,7 @@
 
 > **For my AI instructor:** Paste this file at the start of each new session. Continue from **Current position**. Verify anything marked *unverified* before relying on it.
 
-**Last updated:** 2026-11-18
+**Last updated:** 2026-11-19
 
 ## Programme
 
@@ -23,9 +23,11 @@ Teaching method: one stage at a time, ticket-style exercises, evidence before mo
 ## Current position
 
 - **Phase 1:** Windows Server and Active Directory
-- **Completed:** Labs 0.1, 0.2, 0.3 (network migration), 1.1 and 1.2; Design Decisions 001–002; CHG-001 to CHG-011; 68 redacted evidence screenshots embedded in all lab documents
+- **Completed:** Labs 0.1, 0.2, 0.3 (network migration), 1.1, 1.2 and **1.3 (CLIENT02 joined)**; Design Decisions 001–002; CHG-001 to CHG-013; 68 redacted evidence screenshots embedded in all lab documents
 - **Next:**
-  1. Lab 1.3: join SUCCESS (PC2) to the domain. Set its DNS to DC01 only, rename it to CLIENT02 (naming convention), verify the domain login. Consider moving PC2 to Ethernet first.
+  1. Lab 1.4: domain time. Configure DC01 (the PDC emulator) to sync from a reliable external NTP source; the client offset was ~64 s.
+  2. Lab 1.5: OUs, users and security groups; move CLIENT02 out of `CN=Computers`.
+  3. Lab 1.6: Group Policy, including the echo-request rule for the Domain profile.
 
 ## Verified environment facts
 
@@ -33,7 +35,7 @@ Teaching method: one stage at a time, ticket-style exercises, evidence before mo
 |---|---|
 | Host PC | ButtyTheGreat · Windows 11 Pro · i5 11th Gen · 32 GB · VMware Workstation Pro · **Ethernet** via Realtek USB GbE (`Ethernet 2`), DHCP (192.168.5.161 at last check) · DNS: router · Wi-Fi switched off · profile **Private** (CHG-011) |
 | Host extras | VirtualBox host-only adapter (192.168.56.1), TAP-Windows VPN adapter |
-| Client PC | SUCCESS · Windows 11 Pro · 4 GB · Wi-Fi (Intel AC 9560) · 192.168.5.166 (DHCP) · DNS: router (until Lab 1.3) · profile **Private** (CHG-011) |
+| Client PC | **CLIENT02** (was SUCCESS) · member of `ad.buttytechnologies.test` · DNS 192.168.5.10 only · profile DomainAuthenticated · time source DC01 · Windows 11 Pro · 4 GB · Wi-Fi (Intel AC 9560) · 192.168.5.166 (DHCP) |
 | Router | ISP-branded, MT7628 platform · LAN 192.168.5.1/24 · DHCP **.100–.200** · DNS fields empty · WAN 192.168.188.150 via an upstream unit (192.168.188.1), so **double NAT** |
 | Address plan | Static infrastructure .2–.99 · DHCP .100–.200 · spare .201–.254 · 192.168.188.0/24 reserved |
 | VMware | VMnet0 Bridged → **Realtek USB GbE** · VMnet1 Host-only 192.168.159.0/24 · VMnet8 NAT 192.168.160.0/24 |
@@ -59,7 +61,8 @@ Teaching method: one stage at a time, ticket-style exercises, evidence before mo
 - [ ] Re-run `dcdiag /q` after 2026-11-17 16:00; DFSREvent should clear (the dirty-shutdown events then fall outside 24 hours)
 - [ ] Always shut DC01 down cleanly (event 6008 on 2026-11-16; DFSR recovered with 2214)
 - [ ] Identify the unknown DHCP client (.115, randomised MAC). Confirmed **not** SUCCESS
-- [ ] Lab 1.3: after the domain join, SUCCESS's profile becomes DomainAuthenticated, and the echo-request rule is Private-only, so decide how to handle it (Group Policy)
+- [ ] CLIENT02 no longer answers pings (DomainAuthenticated profile; rule is Private-only). Fix via GPO in Lab 1.6
+- [ ] Use a delegated, least-privilege account for future domain joins (Lab 1.5)
 - [ ] Consider deleting snapshots 01 and 02 after Lab 1.3 (practise consolidation)
 - [ ] Capture screenshots as we go: one per verification step, `hostname` first
 - [ ] Check whether the router's admin password has been changed from the default
